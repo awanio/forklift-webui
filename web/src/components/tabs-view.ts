@@ -46,6 +46,66 @@ export class TabsView extends LitElement {
       transform: scaleX(1);
     }
     .panel { padding: 1rem; }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--vp-c-text-1);
+    }
+    .create-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--vp-c-brand-soft);
+      color: var(--vp-c-text-1);
+      border: 1px solid var(--vp-c-border);
+      padding: 0.4rem 0.65rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+    .create-btn:hover {
+      background: var(--vp-c-brand-2);
+      color: #fff;
+      border-color: var(--vp-c-brand-2);
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--vp-c-border);
+      border-radius: 0.5rem;
+      background: var(--vp-c-bg);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+    }
+    thead {
+      background: var(--vp-c-bg-soft);
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--vp-c-border);
+      color: var(--vp-c-text-1);
+    }
+    tbody tr:hover {
+      background: var(--vp-c-bg-soft);
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.4rem;
+      border-radius: 9999px;
+      background: var(--vp-c-brand-soft);
+      color: var(--vp-c-text-1);
+      font-size: 0.75rem;
+    }
   `
 
   @property({ type: String }) declare activePath: string
@@ -67,23 +127,62 @@ export class TabsView extends LitElement {
     }
   }
 
+  private onCreate() {
+    const name = this.activePath.replace('/', '') || 'item'
+    // Placeholder create action
+    alert(`Create new ${name}`)
+  }
+
+  private table(title: string, rows: Array<Record<string, string>>) {
+    return html`
+      <div class="panel">
+        <div class="panel-header">
+          <div class="title">${title}</div>
+          <button class="create-btn" @click=${() => this.onCreate()}>
+            <span>＋</span>
+            <span>Create</span>
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                ${Object.keys(rows[0] ?? { Name: '', Status: '', Updated: '' }).map(
+                  (k) => html`<th>${k}</th>`
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map(
+                (r) => html`<tr>
+                  ${Object.entries(r).map(([k, v]) => html`<td>${k === 'Status' ? html`<span class="badge">${v}</span>` : v}</td>`)}
+                </tr>`
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `
+  }
+
   renderPanel() {
     switch (this.activePath) {
       case '/dashboard':
-        return html`<div class="panel">
-          <h2 class="text-xl font-semibold text-[var(--vp-c-text-1)]">Dashboard</h2>
-          <p class="text-[var(--vp-c-text-2)]">Welcome to forklift-wui</p>
-        </div>`
+        return this.table('Dashboard', [
+          { Name: 'Node A', Status: 'Healthy', Updated: '1m ago' },
+          { Name: 'Node B', Status: 'Degraded', Updated: '5m ago' },
+          { Name: 'Node C', Status: 'Healthy', Updated: '10m ago' }
+        ])
       case '/settings':
-        return html`<div class="panel">
-          <h2 class="text-xl font-semibold">Settings</h2>
-          <p class="text-[var(--vp-c-text-2)]">Adjust preferences.</p>
-        </div>`
+        return this.table('Settings', [
+          { Name: 'Theme', Status: 'Dark', Updated: 'now' },
+          { Name: 'Language', Status: 'EN', Updated: 'yesterday' }
+        ])
       case '/about':
-        return html`<div class="panel">
-          <h2 class="text-xl font-semibold">About</h2>
-          <p class="text-[var(--vp-c-text-2)]">A minimal web UI using Lit + Tailwind.</p>
-        </div>`
+        return this.table('About', [
+          { Name: 'Project', Status: 'Active', Updated: '2025-08-10' },
+          { Name: 'License', Status: 'MIT', Updated: '2025-08-01' }
+        ])
       default:
         return html`<div class="panel">Not found</div>`
     }
