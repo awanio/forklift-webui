@@ -1,12 +1,50 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
+import page from 'page'
 
 @customElement('tabs-view')
 export class TabsView extends LitElement {
   static styles = css`
-    .tabs { display: flex; gap: 0.25rem; padding: 0.5rem; border-bottom: 1px solid var(--vp-c-border); }
-    .tab { padding: 0.35rem 0.6rem; border: 1px solid var(--vp-c-border); border-bottom: none; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; background: var(--vp-c-bg-soft); cursor: pointer; }
-    .tab.active { background: var(--vp-c-bg); color: var(--vp-c-brand-1); border-color: var(--vp-c-brand-1); }
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      padding: 0 1rem;
+      border-bottom: 1px solid var(--vp-c-border);
+      background: var(--vp-c-bg);
+    }
+    .tab {
+      position: relative;
+      padding: 0.75rem 0.25rem;
+      cursor: pointer;
+      color: var(--vp-c-text-2);
+      transition: color 0.15s ease;
+      user-select: none;
+    }
+    .tab:hover {
+      color: var(--vp-c-text-1);
+    }
+    .tab.active {
+      color: var(--vp-c-text-1);
+    }
+    .tab::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: transparent;
+      transform: scaleX(0);
+      transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+    .tab:hover::after {
+      background: var(--vp-c-border);
+      transform: scaleX(1);
+    }
+    .tab.active::after {
+      background: var(--vp-c-brand-1);
+      transform: scaleX(1);
+    }
     .panel { padding: 1rem; }
   `
 
@@ -21,6 +59,12 @@ export class TabsView extends LitElement {
       { key: '/settings', title: 'Settings' },
       { key: '/about', title: 'About' }
     ]
+  }
+
+  private onTabClick(path: string) {
+    if (path !== this.activePath) {
+      page.show(path)
+    }
   }
 
   renderPanel() {
@@ -49,7 +93,7 @@ export class TabsView extends LitElement {
     return html`
       <div class="tabs">
         ${this.tabs.map(
-          (t) => html`<div class="tab ${t.key === this.activePath ? 'active' : ''}">${t.title}</div>`
+          (t) => html`<div class="tab ${t.key === this.activePath ? 'active' : ''}" @click=${() => this.onTabClick(t.key)}>${t.title}</div>`
         )}
       </div>
       ${this.renderPanel()}
