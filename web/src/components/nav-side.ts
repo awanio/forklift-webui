@@ -40,7 +40,7 @@ export class NavSide extends LitElement {
     summary::-webkit-details-marker { display: none }
   `
 
-  @state() private openSet!: Set<string>
+  @state() private declare openSet: Set<string>
 
   constructor() {
     super()

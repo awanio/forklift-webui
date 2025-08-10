@@ -10,8 +10,8 @@ export class TabsView extends LitElement {
     .panel { padding: 1rem; }
   `
 
-  @property({ type: String }) activePath!: string
-  @state() private tabs!: { key: string; title: string }[]
+  @property({ type: String }) declare activePath: string
+  @state() private declare tabs: { key: string; title: string }[]
 
   constructor() {
     super()

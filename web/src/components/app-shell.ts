@@ -34,7 +34,7 @@ export class AppShell extends LitElement {
     }
   `
 
-  @state() private path!: string
+  @state() private declare path: string
 
   constructor() {
     super()
