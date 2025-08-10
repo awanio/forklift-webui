@@ -38,7 +38,7 @@ export class AppShell extends LitElement {
 
   constructor() {
     super()
-    this.path = '/dashboard'
+    this.path = '/providers'
   }
 
   connectedCallback(): void {

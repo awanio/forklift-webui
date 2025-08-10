@@ -9,14 +9,9 @@ type TreeNode = {
 }
 
 const menu: TreeNode[] = [
-  { label: 'Dashboard', path: '/dashboard' },
-  {
-    label: 'Management',
-    children: [
-      { label: 'Settings', path: '/settings' },
-      { label: 'About', path: '/about' }
-    ]
-  }
+  { label: 'Providers', path: '/providers' },
+  { label: 'Plans', path: '/plans' },
+  { label: 'Mapings', path: '/mapings' }
 ]
 
 @customElement('nav-side')
@@ -27,9 +22,9 @@ export class NavSide extends LitElement {
       overflow: auto;
       padding: 0.5rem;
     }
-    .item {
+.item {
       padding: 0.35rem 0.5rem;
-      border-radius: 0.375rem;
+      border-radius: 0.25rem;
       cursor: pointer;
       color: var(--vp-c-text-1);
     }
@@ -44,7 +39,7 @@ export class NavSide extends LitElement {
 
   constructor() {
     super()
-    this.openSet = new Set<string>(['Management'])
+    this.openSet = new Set<string>()
   }
 
   private onNavigate(path?: string) {

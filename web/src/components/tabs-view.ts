@@ -58,7 +58,7 @@ export class TabsView extends LitElement {
       font-weight: 600;
       color: var(--vp-c-text-1);
     }
-    .create-btn {
+.create-btn {
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
@@ -66,7 +66,7 @@ export class TabsView extends LitElement {
       color: var(--vp-c-text-1);
       border: 1px solid var(--vp-c-border);
       padding: 0.4rem 0.65rem;
-      border-radius: 0.5rem;
+      border-radius: 0.25rem;
       cursor: pointer;
     }
     .create-btn:hover {
@@ -75,10 +75,10 @@ export class TabsView extends LitElement {
       border-color: var(--vp-c-brand-2);
     }
 
-    .table-wrap {
+.table-wrap {
       overflow: auto;
       border: 1px solid var(--vp-c-border);
-      border-radius: 0.5rem;
+      border-radius: 0.25rem;
       background: var(--vp-c-bg);
     }
     table {
@@ -113,11 +113,11 @@ export class TabsView extends LitElement {
 
   constructor() {
     super()
-    this.activePath = '/dashboard'
+    this.activePath = '/providers'
     this.tabs = [
-      { key: '/dashboard', title: 'Dashboard' },
-      { key: '/settings', title: 'Settings' },
-      { key: '/about', title: 'About' }
+      { key: '/providers', title: 'Providers' },
+      { key: '/plans', title: 'Plans' },
+      { key: '/mapings', title: 'Mapings' }
     ]
   }
 
@@ -167,21 +167,22 @@ export class TabsView extends LitElement {
 
   renderPanel() {
     switch (this.activePath) {
-      case '/dashboard':
-        return this.table('Dashboard', [
-          { Name: 'Node A', Status: 'Healthy', Updated: '1m ago' },
-          { Name: 'Node B', Status: 'Degraded', Updated: '5m ago' },
-          { Name: 'Node C', Status: 'Healthy', Updated: '10m ago' }
+      case '/providers':
+        return this.table('Providers', [
+          { Name: 'AWS', Status: 'Active', Updated: '1m ago' },
+          { Name: 'GCP', Status: 'Active', Updated: '5m ago' },
+          { Name: 'Azure', Status: 'Inactive', Updated: '10m ago' }
         ])
-      case '/settings':
-        return this.table('Settings', [
-          { Name: 'Theme', Status: 'Dark', Updated: 'now' },
-          { Name: 'Language', Status: 'EN', Updated: 'yesterday' }
+      case '/plans':
+        return this.table('Plans', [
+          { Name: 'Basic', Status: 'Enabled', Updated: 'now' },
+          { Name: 'Pro', Status: 'Enabled', Updated: 'yesterday' },
+          { Name: 'Enterprise', Status: 'Draft', Updated: '2d ago' }
         ])
-      case '/about':
-        return this.table('About', [
-          { Name: 'Project', Status: 'Active', Updated: '2025-08-10' },
-          { Name: 'License', Status: 'MIT', Updated: '2025-08-01' }
+      case '/mapings':
+        return this.table('Mapings', [
+          { Name: 'Plan->AWS', Status: 'OK', Updated: '2025-08-10' },
+          { Name: 'Plan->GCP', Status: 'OK', Updated: '2025-08-10' }
         ])
       default:
         return html`<div class="panel">Not found</div>`

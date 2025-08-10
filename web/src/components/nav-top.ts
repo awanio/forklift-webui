@@ -19,12 +19,12 @@ export class NavTop extends LitElement {
       font-weight: 600;
       color: var(--vp-c-brand-1);
     }
-    .actions button {
+.actions button {
       background: var(--vp-c-brand-soft);
       color: var(--vp-c-text-1);
       border: 1px solid var(--vp-c-border);
       padding: 0.35rem 0.6rem;
-      border-radius: 0.5rem;
+      border-radius: 0.25rem;
       cursor: pointer;
     }
     .actions button:hover {
