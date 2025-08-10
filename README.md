@@ -8,6 +8,7 @@ A minimal Go web UI skeleton.
 
 ## Quick start
 
+Backend (Go):
 - Run locally:
   - `go run ./cmd/forklift-wui`
   - Or `make run`
@@ -17,6 +18,16 @@ A minimal Go web UI skeleton.
 
 - Build container image:
   - `make docker-build`
+
+Frontend (Vite + Tailwind + Lit):
+- From `web/`:
+  - Install deps: `npm install`
+  - Dev server: `npm run dev`
+  - Build: `npm run build` (outputs to `web/dist/`)
+
+To serve the built frontend with Go, either:
+- Copy `web/dist/*` into `web/` (replacing dev source) or
+- Change `WEB_DIR` env to `web/dist` when running the Go server.
 
 ## Configuration
 

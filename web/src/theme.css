@@ -1,0 +1,14 @@
+/* Accent and focus styles like VitePress */
+:root {
+  --focus-ring: 0 0 0 2px var(--vp-c-brand-1);
+}
+
+::selection {
+  background-color: var(--vp-c-brand-soft);
+  color: var(--vp-c-text-1);
+}
+
+:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+}

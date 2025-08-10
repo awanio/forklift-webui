@@ -4,14 +4,24 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func main() {
 	addr := getenv("ADDR", ":8080")
 	webDir := getenv("WEB_DIR", "web")
 
-	fs := http.FileServer(http.Dir(webDir))
-	http.Handle("/", fs)
+	// Static file server with SPA fallback
+	hs := http.FileServer(http.Dir(webDir))
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		p := filepath.Join(webDir, r.URL.Path)
+		if info, err := os.Stat(p); err == nil && !info.IsDir() {
+			hs.ServeHTTP(w, r)
+			return
+		}
+		// Fallback to index.html for client-side routes
+		http.ServeFile(w, r, filepath.Join(webDir, "index.html"))
+	})
 
 	log.Printf("Serving %s on %s\n", webDir, addr)
 	if err := http.ListenAndServe(addr, nil); err != nil {
