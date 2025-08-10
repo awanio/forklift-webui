@@ -60,54 +60,6 @@ export class TabsView extends LitElement {
       font-weight: 600;
       color: var(--vp-c-text-1);
     }
-/* button/table styles moved to reusable UI components */
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: var(--vp-c-brand-soft);
-      color: var(--vp-c-text-1);
-      border: 1px solid var(--vp-c-border);
-      padding: 0.4rem 0.65rem;
-      border-radius: 0.25rem;
-      cursor: pointer;
-    }
-    .create-btn:hover {
-      background: var(--vp-c-brand-2);
-      color: #fff;
-      border-color: var(--vp-c-brand-2);
-    }
-
-/* table presentation handled by ui-table */
-      overflow: auto;
-      border: 1px solid var(--vp-c-border);
-      border-radius: 0.25rem;
-      background: var(--vp-c-bg);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 640px;
-    }
-    thead {
-      background: var(--vp-c-bg-soft);
-    }
-    th, td {
-      text-align: left;
-      padding: 0.65rem 0.75rem;
-      border-bottom: 1px solid var(--vp-c-border);
-      color: var(--vp-c-text-1);
-    }
-    tbody tr:hover {
-      background: var(--vp-c-bg-soft);
-    }
-    .badge {
-      display: inline-block;
-      padding: 0.15rem 0.4rem;
-      border-radius: 9999px;
-      background: var(--vp-c-brand-soft);
-      color: var(--vp-c-text-1);
-      font-size: 0.75rem;
-    }
   `
 
   @property({ type: String }) declare activePath: string
