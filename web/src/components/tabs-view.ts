@@ -64,6 +64,8 @@ export class TabsView extends LitElement {
 
   @property({ type: String }) declare activePath: string
   @state() private declare tabs: { key: string; title: string }[]
+  @state() private declare subTabs: { key: string; title: string }[]
+  @state() private declare subKey: string
 
   constructor() {
     super()
@@ -73,17 +75,53 @@ export class TabsView extends LitElement {
       { key: '/plans', title: 'Plans' },
       { key: '/mappings', title: 'Mappings' }
     ]
+    this.subTabs = this.computeSubTabs(this.activePath)
+    this.subKey = this.subTabs[0]?.key ?? 'overview'
   }
 
-  private onTabClick(path: string) {
+  protected willUpdate(changed: Map<string, unknown>) {
+    if (changed.has('activePath')) {
+      this.subTabs = this.computeSubTabs(this.activePath)
+      this.subKey = this.subTabs[0]?.key ?? 'overview'
+    }
+  }
+
+  private computeSubTabs(path: string): { key: string; title: string }[] {
+    switch (path) {
+      case '/providers':
+        return [
+          { key: 'overview', title: 'Overview' },
+          { key: 'accounts', title: 'Accounts' },
+          { key: 'regions', title: 'Regions' }
+        ]
+      case '/plans':
+        return [
+          { key: 'overview', title: 'Overview' },
+          { key: 'versions', title: 'Versions' },
+          { key: 'pricing', title: 'Pricing' }
+        ]
+      case '/mappings':
+        return [
+          { key: 'overview', title: 'Overview' },
+          { key: 'rules', title: 'Rules' }
+        ]
+      default:
+        return [{ key: 'overview', title: 'Overview' }]
+    }
+  }
+
+  private onMainTabClick(path: string) {
     if (path !== this.activePath) {
       page.show(path)
     }
   }
 
+  private onSubTabClick(key: string) {
+    this.subKey = key
+  }
+
   private onCreate() {
-    const name = this.activePath.replace('/', '') || 'item'
-    // Placeholder create action
+    const name = `${this.activePath.replace('/', '')}-${this.subKey}`
     alert(`Create new ${name}`)
   }
 
@@ -104,19 +142,49 @@ export class TabsView extends LitElement {
   renderPanel() {
     switch (this.activePath) {
       case '/providers':
-        return this.table('Providers', [
+        if (this.subKey === 'accounts') {
+          return this.table('Providers • Accounts', [
+            { Name: 'aws-root', Status: 'Active', Updated: '1m ago' },
+            { Name: 'aws-dev', Status: 'Active', Updated: '5m ago' }
+          ])
+        }
+        if (this.subKey === 'regions') {
+          return this.table('Providers • Regions', [
+            { Name: 'us-east-1', Status: 'Available', Updated: 'now' },
+            { Name: 'ap-southeast-1', Status: 'Available', Updated: '2m ago' }
+          ])
+        }
+        return this.table('Providers • Overview', [
           { Name: 'AWS', Status: 'Active', Updated: '1m ago' },
           { Name: 'GCP', Status: 'Active', Updated: '5m ago' },
           { Name: 'Azure', Status: 'Inactive', Updated: '10m ago' }
         ])
       case '/plans':
-        return this.table('Plans', [
+        if (this.subKey === 'versions') {
+          return this.table('Plans • Versions', [
+            { Name: 'v1.0', Status: 'Active', Updated: 'today' },
+            { Name: 'v1.1', Status: 'Draft', Updated: 'yesterday' }
+          ])
+        }
+        if (this.subKey === 'pricing') {
+          return this.table('Plans • Pricing', [
+            { Name: 'Basic', Status: '$9', Updated: 'today' },
+            { Name: 'Pro', Status: '$29', Updated: 'today' }
+          ])
+        }
+        return this.table('Plans • Overview', [
           { Name: 'Basic', Status: 'Enabled', Updated: 'now' },
           { Name: 'Pro', Status: 'Enabled', Updated: 'yesterday' },
           { Name: 'Enterprise', Status: 'Draft', Updated: '2d ago' }
         ])
       case '/mappings':
-        return this.table('Mappings', [
+        if (this.subKey === 'rules') {
+          return this.table('Mappings • Rules', [
+            { Name: 'Plan->AWS', Status: 'OK', Updated: '2025-08-10' },
+            { Name: 'Plan->GCP', Status: 'OK', Updated: '2025-08-10' }
+          ])
+        }
+        return this.table('Mappings • Overview', [
           { Name: 'Plan->AWS', Status: 'OK', Updated: '2025-08-10' },
           { Name: 'Plan->GCP', Status: 'OK', Updated: '2025-08-10' }
         ])
@@ -129,9 +197,16 @@ export class TabsView extends LitElement {
     return html`
       <div class="tabs">
         ${this.tabs.map(
-          (t) => html`<div class="tab ${t.key === this.activePath ? 'active' : ''}" @click=${() => this.onTabClick(t.key)}>${t.title}</div>`
+          (t) => html`<div class="tab ${t.key === this.activePath ? 'active' : ''}" @click=${() => this.onMainTabClick(t.key)}>${t.title}</div>`
         )}
       </div>
+
+      <div class="tabs" style="gap: 0.75rem; padding: 0 1rem;">
+        ${this.subTabs.map(
+          (t) => html`<div class="tab ${t.key === this.subKey ? 'active' : ''}" @click=${() => this.onSubTabClick(t.key)}>${t.title}</div>`
+        )}
+      </div>
+
       ${this.renderPanel()}
     `
   }
