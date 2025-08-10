@@ -18,7 +18,12 @@ export class UITable extends LitElement {
     .badge { display: inline-block; padding: 0.15rem 0.4rem; border-radius: 9999px; background: var(--vp-c-brand-soft); color: var(--vp-c-text-1); font-size: 0.75rem; }
   `
 
-  @property({ attribute: false }) rows: Array<Record<string, string>> = []
+  @property({ attribute: false }) declare rows: Array<Record<string, string>>
+
+  constructor() {
+    super()
+    this.rows = []
+  }
 
   private headers(): string[] {
     if (this.rows.length === 0) return ['Name', 'Status', 'Updated']

@@ -24,7 +24,12 @@ export class UIButton extends LitElement {
     }
   `
 
-  @property({ type: String }) type: 'button' | 'submit' = 'button'
+  @property({ type: String }) declare type: 'button' | 'submit'
+
+  constructor() {
+    super()
+    this.type = 'button'
+  }
 
   render() {
     return html`<button type="${this.type}"><slot></slot></button>`
