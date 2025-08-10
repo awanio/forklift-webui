@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js'
 import page from 'page'
 import '../ui/ui-button'
 import '../ui/ui-table'
+import '../ui/ui-drawer'
 
 @customElement('tabs-view')
 export class TabsView extends LitElement {
@@ -66,6 +67,7 @@ export class TabsView extends LitElement {
   @state() private declare tabs: { key: string; title: string }[]
   @state() private declare subTabs: { key: string; title: string }[]
   @state() private declare subKey: string
+  @state() private declare showDrawer: boolean
 
   constructor() {
     super()
@@ -77,6 +79,7 @@ export class TabsView extends LitElement {
     ]
     this.subTabs = this.computeSubTabs(this.activePath)
     this.subKey = this.subTabs[0]?.key ?? 'overview'
+    this.showDrawer = false
   }
 
   protected willUpdate(changed: Map<string, unknown>) {
@@ -121,8 +124,11 @@ export class TabsView extends LitElement {
   }
 
   private onCreate() {
-    const name = `${this.activePath.replace('/', '')}-${this.subKey}`
-    alert(`Create new ${name}`)
+    this.showDrawer = true
+  }
+
+  private onCloseDrawer() {
+    this.showDrawer = false
   }
 
   private table(title: string, rows: Array<Record<string, string>>) {
@@ -202,6 +208,21 @@ export class TabsView extends LitElement {
       </div>
 
       ${this.renderPanel()}
+
+      
+      <ui-drawer .open=${this.showDrawer} @close=${() => this.onCloseDrawer()}>
+        <div style="padding: 1rem; display: grid; gap: 0.75rem;">
+          <h3 style="margin:0; font-weight:600; color: var(--vp-c-text-1);">Create ${this.activePath.replace('/', '')} • ${this.subKey}</h3>
+          <label style="display:grid; gap:0.25rem;">
+            <span style="color:var(--vp-c-text-2);">Name</span>
+            <input style="padding:0.5rem; border:1px solid var(--vp-c-border); background:var(--vp-c-bg); color:var(--vp-c-text-1); border-radius: var(--radius-sm);" placeholder="Enter name" />
+          </label>
+          <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:0.5rem;">
+            <ui-button @click=${() => this.onCloseDrawer()}>Cancel</ui-button>
+            <ui-button>Save</ui-button>
+          </div>
+        </div>
+      </ui-drawer>
     `
   }
 }
