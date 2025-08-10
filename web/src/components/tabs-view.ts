@@ -1,6 +1,8 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import page from 'page'
+import '../ui/ui-button'
+import '../ui/ui-table'
 
 @customElement('tabs-view')
 export class TabsView extends LitElement {
@@ -58,7 +60,7 @@ export class TabsView extends LitElement {
       font-weight: 600;
       color: var(--vp-c-text-1);
     }
-.create-btn {
+/* button/table styles moved to reusable UI components */
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
@@ -75,7 +77,7 @@ export class TabsView extends LitElement {
       border-color: var(--vp-c-brand-2);
     }
 
-.table-wrap {
+/* table presentation handled by ui-table */
       overflow: auto;
       border: 1px solid var(--vp-c-border);
       border-radius: 0.25rem;
@@ -117,7 +119,7 @@ export class TabsView extends LitElement {
     this.tabs = [
       { key: '/providers', title: 'Providers' },
       { key: '/plans', title: 'Plans' },
-      { key: '/mapings', title: 'Mapings' }
+      { key: '/mappings', title: 'Mappings' }
     ]
   }
 
@@ -138,29 +140,11 @@ export class TabsView extends LitElement {
       <div class="panel">
         <div class="panel-header">
           <div class="title">${title}</div>
-          <button class="create-btn" @click=${() => this.onCreate()}>
-            <span>＋</span>
-            <span>Create</span>
-          </button>
+          <ui-button @click=${() => this.onCreate()}>
+            ＋ Create
+          </ui-button>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                ${Object.keys(rows[0] ?? { Name: '', Status: '', Updated: '' }).map(
-                  (k) => html`<th>${k}</th>`
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              ${rows.map(
-                (r) => html`<tr>
-                  ${Object.entries(r).map(([k, v]) => html`<td>${k === 'Status' ? html`<span class="badge">${v}</span>` : v}</td>`)}
-                </tr>`
-              )}
-            </tbody>
-          </table>
-        </div>
+        <ui-table .rows=${rows}></ui-table>
       </div>
     `
   }
@@ -179,8 +163,8 @@ export class TabsView extends LitElement {
           { Name: 'Pro', Status: 'Enabled', Updated: 'yesterday' },
           { Name: 'Enterprise', Status: 'Draft', Updated: '2d ago' }
         ])
-      case '/mapings':
-        return this.table('Mapings', [
+      case '/mappings':
+        return this.table('Mappings', [
           { Name: 'Plan->AWS', Status: 'OK', Updated: '2025-08-10' },
           { Name: 'Plan->GCP', Status: 'OK', Updated: '2025-08-10' }
         ])

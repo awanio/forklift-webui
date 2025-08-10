@@ -10,8 +10,8 @@ page('/providers', () => {
 page('/plans', () => {
   window.dispatchEvent(new CustomEvent('route:change', { detail: { path: '/plans' } }))
 })
-page('/mapings', () => {
-  window.dispatchEvent(new CustomEvent('route:change', { detail: { path: '/mapings' } }))
+page('/mappings', () => {
+  window.dispatchEvent(new CustomEvent('route:change', { detail: { path: '/mappings' } }))
 })
 
 page()

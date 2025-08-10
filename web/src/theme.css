@@ -1,6 +1,11 @@
 /* Accent and focus styles like VitePress */
 :root {
   --focus-ring: 0 0 0 2px var(--vp-c-brand-1);
+  /* UI radius scale */
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
 }
 
 ::selection {

@@ -24,7 +24,7 @@ export class NavTop extends LitElement {
       color: var(--vp-c-text-1);
       border: 1px solid var(--vp-c-border);
       padding: 0.35rem 0.6rem;
-      border-radius: 0.25rem;
+      border-radius: var(--radius-sm);
       cursor: pointer;
     }
     .actions button:hover {

@@ -11,7 +11,7 @@ type TreeNode = {
 const menu: TreeNode[] = [
   { label: 'Providers', path: '/providers' },
   { label: 'Plans', path: '/plans' },
-  { label: 'Mapings', path: '/mapings' }
+  { label: 'Mappings', path: '/mappings' }
 ]
 
 @customElement('nav-side')
@@ -24,7 +24,7 @@ export class NavSide extends LitElement {
     }
 .item {
       padding: 0.35rem 0.5rem;
-      border-radius: 0.25rem;
+      border-radius: var(--radius-sm);
       cursor: pointer;
       color: var(--vp-c-text-1);
     }
