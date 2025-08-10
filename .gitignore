@@ -1,0 +1,23 @@
+# Binaries
+/bin/
+/dist/
+/build/
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+
+# Go build cache and outputs
+*.out
+
+# macOS
+.DS_Store
+
+# IDE/editor
+.vscode/
+.idea/
+*.iml
+
+# Dependency management
+vendor/
