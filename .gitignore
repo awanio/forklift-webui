@@ -21,3 +21,8 @@
 
 # Dependency management
 vendor/
+
+# Frontend artifacts
+/web/node_modules/
+/web/dist/
+/web/.vite/
