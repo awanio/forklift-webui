@@ -195,12 +195,6 @@ export class TabsView extends LitElement {
 
   render() {
     return html`
-      <div class="tabs">
-        ${this.tabs.map(
-          (t) => html`<div class="tab ${t.key === this.activePath ? 'active' : ''}" @click=${() => this.onMainTabClick(t.key)}>${t.title}</div>`
-        )}
-      </div>
-
       <div class="tabs" style="gap: 0.75rem; padding: 0 1rem;">
         ${this.subTabs.map(
           (t) => html`<div class="tab ${t.key === this.subKey ? 'active' : ''}" @click=${() => this.onSubTabClick(t.key)}>${t.title}</div>`
