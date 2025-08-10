@@ -10,12 +10,18 @@ export class TabsView extends LitElement {
     .panel { padding: 1rem; }
   `
 
-  @property({ type: String }) activePath: string = '/dashboard'
-  @state() private tabs: { key: string; title: string }[] = [
-    { key: '/dashboard', title: 'Dashboard' },
-    { key: '/settings', title: 'Settings' },
-    { key: '/about', title: 'About' }
-  ]
+  @property({ type: String }) activePath!: string
+  @state() private tabs!: { key: string; title: string }[]
+
+  constructor() {
+    super()
+    this.activePath = '/dashboard'
+    this.tabs = [
+      { key: '/dashboard', title: 'Dashboard' },
+      { key: '/settings', title: 'Settings' },
+      { key: '/about', title: 'About' }
+    ]
+  }
 
   renderPanel() {
     switch (this.activePath) {

@@ -34,7 +34,12 @@ export class AppShell extends LitElement {
     }
   `
 
-  @state() private path: string = '/dashboard'
+  @state() private path!: string
+
+  constructor() {
+    super()
+    this.path = '/dashboard'
+  }
 
   connectedCallback(): void {
     super.connectedCallback()

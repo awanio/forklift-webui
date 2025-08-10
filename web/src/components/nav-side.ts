@@ -40,7 +40,12 @@ export class NavSide extends LitElement {
     summary::-webkit-details-marker { display: none }
   `
 
-  @state() private openSet = new Set<string>(['Management'])
+  @state() private openSet!: Set<string>
+
+  constructor() {
+    super()
+    this.openSet = new Set<string>(['Management'])
+  }
 
   private onNavigate(path?: string) {
     if (!path) return
