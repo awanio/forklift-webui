@@ -96,7 +96,7 @@ export class TabsView extends LitElement {
       { key: '/mappings', title: 'Mappings' }
     ]
     this.subTabs = this.computeSubTabs(this.activePath)
-    this.subKey = this.subTabs[0]?.key ?? 'overview'
+    this.subKey = this.subTabs[0]?.key ?? 'vmware'
     this.showDrawer = false
     this.drawerMode = 'create'
     this.drawerTitle = 'Create'
@@ -108,7 +108,7 @@ export class TabsView extends LitElement {
   protected willUpdate(changed: Map<string, unknown>) {
     if (changed.has('activePath')) {
       this.subTabs = this.computeSubTabs(this.activePath)
-      this.subKey = this.subTabs[0]?.key ?? 'overview'
+      this.subKey = this.subTabs[0]?.key ?? (this.activePath === '/providers' ? 'vmware' : this.activePath === '/plans' ? 'plans' : 'networks')
     }
   }
 
@@ -116,20 +116,21 @@ export class TabsView extends LitElement {
     switch (path) {
       case '/providers':
         return [
-          { key: 'overview', title: 'Overview' },
-          { key: 'accounts', title: 'Accounts' },
-          { key: 'regions', title: 'Regions' }
+          { key: 'vmware', title: 'VMware' },
+          { key: 'openstack', title: 'OpenStack' },
+          { key: 'kubevirt', title: 'KubeVirt' },
+          { key: 'ovirt', title: 'oVirt' },
+          { key: 'ova', title: 'OVA' }
         ]
       case '/plans':
         return [
-          { key: 'overview', title: 'Overview' },
-          { key: 'versions', title: 'Versions' },
-          { key: 'pricing', title: 'Pricing' }
+          { key: 'plans', title: 'Plans' },
+          { key: 'migrations', title: 'Migrations' }
         ]
       case '/mappings':
         return [
-          { key: 'overview', title: 'Overview' },
-          { key: 'rules', title: 'Rules' }
+          { key: 'networks', title: 'Networks' },
+          { key: 'storages', title: 'Storages' }
         ]
       default:
         return [{ key: 'overview', title: 'Overview' }]
@@ -204,51 +205,77 @@ export class TabsView extends LitElement {
   renderPanel() {
     switch (this.activePath) {
       case '/providers':
-        if (this.subKey === 'accounts') {
-          return this.table('Providers • Accounts', [
-            { Name: 'aws-root', Status: 'Active', Updated: '1m ago' },
-            { Name: 'aws-dev', Status: 'Active', Updated: '5m ago' }
+        if (this.subKey === 'vmware') {
+          return this.table('Providers • VMware', [
+            { Name: 'vCenter-prod', Status: 'Connected', Version: '7.0.3', Updated: '1m ago' },
+            { Name: 'vCenter-dev', Status: 'Connected', Version: '7.0.2', Updated: '5m ago' },
+            { Name: 'ESXi-01', Status: 'Active', Version: '7.0 U3', Updated: '2m ago' }
           ])
         }
-        if (this.subKey === 'regions') {
-          return this.table('Providers • Regions', [
-            { Name: 'us-east-1', Status: 'Available', Updated: 'now' },
-            { Name: 'ap-southeast-1', Status: 'Available', Updated: '2m ago' }
+        if (this.subKey === 'openstack') {
+          return this.table('Providers • OpenStack', [
+            { Name: 'openstack-prod', Status: 'Active', Version: 'Yoga', Updated: 'now' },
+            { Name: 'openstack-dev', Status: 'Active', Version: 'Xena', Updated: '3m ago' },
+            { Name: 'openstack-test', Status: 'Maintenance', Version: 'Wallaby', Updated: '10m ago' }
           ])
         }
-        return this.table('Providers • Overview', [
-          { Name: 'AWS', Status: 'Active', Updated: '1m ago' },
-          { Name: 'GCP', Status: 'Active', Updated: '5m ago' },
-          { Name: 'Azure', Status: 'Inactive', Updated: '10m ago' }
+        if (this.subKey === 'kubevirt') {
+          return this.table('Providers • KubeVirt', [
+            { Name: 'kubevirt-cluster-1', Status: 'Running', Version: 'v0.59.0', Updated: '30s ago' },
+            { Name: 'kubevirt-cluster-2', Status: 'Running', Version: 'v0.58.0', Updated: '2m ago' },
+            { Name: 'kubevirt-dev', Status: 'Paused', Version: 'v0.59.0', Updated: '15m ago' }
+          ])
+        }
+        if (this.subKey === 'ovirt') {
+          return this.table('Providers • oVirt', [
+            { Name: 'ovirt-engine-01', Status: 'Up', Version: '4.5.3', Updated: '1m ago' },
+            { Name: 'ovirt-node-01', Status: 'Up', Version: '4.5.3', Updated: '2m ago' },
+            { Name: 'ovirt-node-02', Status: 'Maintenance', Version: '4.5.2', Updated: '5m ago' }
+          ])
+        }
+        if (this.subKey === 'ova') {
+          return this.table('Providers • OVA', [
+            { Name: 'ubuntu-22.04.ova', Status: 'Available', Size: '2.5 GB', Updated: 'yesterday' },
+            { Name: 'centos-8.ova', Status: 'Available', Size: '1.8 GB', Updated: '2d ago' },
+            { Name: 'windows-2022.ova', Status: 'Importing', Size: '4.2 GB', Updated: '5m ago' }
+          ])
+        }
+        return this.table('Providers', [
+          { Name: 'VMware vCenter', Status: 'Active', Updated: '1m ago' },
+          { Name: 'OpenStack', Status: 'Active', Updated: '5m ago' },
+          { Name: 'KubeVirt', Status: 'Active', Updated: '10m ago' }
         ])
       case '/plans':
-        if (this.subKey === 'versions') {
-          return this.table('Plans • Versions', [
-            { Name: 'v1.0', Status: 'Active', Updated: 'today' },
-            { Name: 'v1.1', Status: 'Draft', Updated: 'yesterday' }
+        if (this.subKey === 'migrations') {
+          return this.table('Plans • Migrations', [
+            { Name: 'vmware-to-openstack-01', Status: 'Running', Progress: '45%', VMs: '12/25', Updated: '5m ago' },
+            { Name: 'esxi-to-kubevirt', Status: 'Completed', Progress: '100%', VMs: '8/8', Updated: '2h ago' },
+            { Name: 'ovirt-migration-batch2', Status: 'Scheduled', Progress: '0%', VMs: '0/15', Updated: 'today' },
+            { Name: 'datacenter-migration', Status: 'Failed', Progress: '72%', VMs: '18/25', Updated: '1h ago' },
+            { Name: 'test-migration-03', Status: 'Paused', Progress: '60%', VMs: '6/10', Updated: '30m ago' }
           ])
         }
-        if (this.subKey === 'pricing') {
-          return this.table('Plans • Pricing', [
-            { Name: 'Basic', Status: '$9', Updated: 'today' },
-            { Name: 'Pro', Status: '$29', Updated: 'today' }
-          ])
-        }
-        return this.table('Plans • Overview', [
-          { Name: 'Basic', Status: 'Enabled', Updated: 'now' },
-          { Name: 'Pro', Status: 'Enabled', Updated: 'yesterday' },
-          { Name: 'Enterprise', Status: 'Draft', Updated: '2d ago' }
+        return this.table('Plans • Plans', [
+          { Name: 'Production-Migration-Q1', Status: 'Active', Source: 'VMware', Target: 'OpenStack', VMs: '45', Updated: 'now' },
+          { Name: 'Dev-Environment-Move', Status: 'Ready', Source: 'ESXi', Target: 'KubeVirt', VMs: '12', Updated: '10m ago' },
+          { Name: 'DR-Site-Migration', Status: 'Draft', Source: 'oVirt', Target: 'OpenStack', VMs: '28', Updated: '1h ago' },
+          { Name: 'Legacy-App-Transfer', Status: 'Archived', Source: 'VMware', Target: 'KubeVirt', VMs: '8', Updated: '2d ago' }
         ])
       case '/mappings':
-        if (this.subKey === 'rules') {
-          return this.table('Mappings • Rules', [
-            { Name: 'Plan->AWS', Status: 'OK', Updated: '2025-08-10' },
-            { Name: 'Plan->GCP', Status: 'OK', Updated: '2025-08-10' }
+        if (this.subKey === 'storages') {
+          return this.table('Mappings • Storages', [
+            { Name: 'vmware-datastore-01', Source: 'VMFS-Datastore-1', Target: 'ceph-pool-01', Type: 'Block', Status: 'Mapped', Updated: '5m ago' },
+            { Name: 'nfs-storage-map', Source: 'NFS-Volume', Target: 'openstack-cinder', Type: 'NFS', Status: 'Mapped', Updated: '10m ago' },
+            { Name: 'san-migration-map', Source: 'iSCSI-LUN-02', Target: 'kubevirt-pvc', Type: 'iSCSI', Status: 'Pending', Updated: '1h ago' },
+            { Name: 'local-storage-map', Source: 'Local-VMDK', Target: 'local-pv', Type: 'Local', Status: 'Mapped', Updated: '2h ago' }
           ])
         }
-        return this.table('Mappings • Overview', [
-          { Name: 'Plan->AWS', Status: 'OK', Updated: '2025-08-10' },
-          { Name: 'Plan->GCP', Status: 'OK', Updated: '2025-08-10' }
+        return this.table('Mappings • Networks', [
+          { Name: 'prod-network-map', Source: 'vlan-100', Target: 'ovn-network-prod', Type: 'VLAN', Status: 'Active', Updated: 'now' },
+          { Name: 'dev-network-map', Source: 'vlan-200', Target: 'neutron-dev-net', Type: 'VLAN', Status: 'Active', Updated: '3m ago' },
+          { Name: 'dmz-network-map', Source: 'port-group-dmz', Target: 'ovn-dmz-segment', Type: 'Distributed', Status: 'Active', Updated: '15m ago' },
+          { Name: 'management-map', Source: 'mgmt-network', Target: 'ocp-mgmt-net', Type: 'Standard', Status: 'Inactive', Updated: '1h ago' },
+          { Name: 'storage-network', Source: 'vsan-network', Target: 'ceph-public', Type: 'Storage', Status: 'Active', Updated: '30m ago' }
         ])
       default:
         return html`<div class="panel">Not found</div>`
