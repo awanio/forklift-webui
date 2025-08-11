@@ -20,8 +20,12 @@ export class AppShell extends LitElement {
     }
     .main {
       display: grid;
-      grid-template-columns: 260px 1fr;
+      grid-template-columns: 180px 1fr;
       min-height: 0;
+      transition: grid-template-columns 0.3s ease;
+    }
+    .main.sidebar-collapsed {
+      grid-template-columns: 60px 1fr;
     }
     .sidebar {
       border-right: 1px solid var(--vp-c-border);
@@ -35,22 +39,28 @@ export class AppShell extends LitElement {
   `
 
   @state() private declare path: string
+  @state() private declare sidebarCollapsed: boolean
 
   constructor() {
     super()
     this.path = '/providers'
+    // Check localStorage for sidebar state
+    const saved = localStorage.getItem('sidebar-collapsed')
+    this.sidebarCollapsed = saved === 'true' || false
   }
 
   connectedCallback(): void {
     super.connectedCallback()
-    // default dark
-    document.documentElement.classList.add('dark')
+    // Theme will be handled by nav-top component
     this._onRoute = this._onRoute.bind(this)
+    this._onSidebarToggle = this._onSidebarToggle.bind(this)
     window.addEventListener('route:change', this._onRoute)
+    window.addEventListener('sidebar-toggle', this._onSidebarToggle)
   }
 
   disconnectedCallback(): void {
     window.removeEventListener('route:change', this._onRoute)
+    window.removeEventListener('sidebar-toggle', this._onSidebarToggle)
     super.disconnectedCallback()
   }
 
@@ -59,16 +69,16 @@ export class AppShell extends LitElement {
     this.path = detail.path
   }
 
-  private toggleTheme() {
-    document.documentElement.classList.toggle('dark')
-    this.requestUpdate()
+  private _onSidebarToggle(e: Event) {
+    const detail = (e as CustomEvent).detail as { collapsed: boolean }
+    this.sidebarCollapsed = detail.collapsed
   }
 
   render() {
     return html`
       <div class="layout">
-        <nav-top @toggle-theme=${() => this.toggleTheme()}></nav-top>
-        <div class="main">
+        <nav-top></nav-top>
+        <div class="main ${this.sidebarCollapsed ? 'sidebar-collapsed' : ''}">
           <nav-side class="sidebar"></nav-side>
           <div class="content">
             <tabs-view .activePath=${this.path}></tabs-view>

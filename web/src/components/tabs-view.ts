@@ -57,10 +57,22 @@ export class TabsView extends LitElement {
       justify-content: space-between;
       margin-bottom: 0.75rem;
     }
-    .title {
-      font-size: 1.125rem;
-      font-weight: 600;
+    .search-input {
+      flex: 1;
+      max-width: 400px;
+      padding: 0.4rem 0.75rem;
+      border: 1px solid var(--vp-c-border);
+      border-radius: var(--radius-xs);
+      background: var(--vp-c-bg);
       color: var(--vp-c-text-1);
+      font-size: 0.875rem;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--vp-c-brand-1);
+    }
+    .search-input::placeholder {
+      color: var(--vp-c-text-3);
     }
   `
 
@@ -179,7 +191,7 @@ export class TabsView extends LitElement {
     return html`
       <div class="panel">
         <div class="panel-header">
-          <div class="title">${title}</div>
+          <input type="search" placeholder="Search ${title}..." class="search-input" />
           <ui-button @click=${() => this.onCreate()}>
             ＋ Create
           </ui-button>

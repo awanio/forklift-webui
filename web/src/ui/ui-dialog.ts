@@ -13,8 +13,9 @@ export class UIDialog extends LitElement {
       inset: 0;
       z-index: 9999;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
+      padding-top: 10vh;
     }
     
     .backdrop {
@@ -28,7 +29,7 @@ export class UIDialog extends LitElement {
       position: relative;
       background: var(--vp-c-bg);
       color: var(--vp-c-text-1);
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-xs);
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       max-width: 400px;
       width: 90%;
@@ -60,7 +61,7 @@ export class UIDialog extends LitElement {
     
     button {
       padding: 0.5rem 1.25rem;
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-xs);
       font-size: 0.875rem;
       font-weight: 500;
       cursor: pointer;

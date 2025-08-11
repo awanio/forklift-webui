@@ -12,13 +12,13 @@ export class UIMenu extends LitElement {
       background: var(--vp-c-bg);
       color: var(--vp-c-text-1);
       border: 1px solid var(--vp-c-border);
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-xs);
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       padding: 0.25rem;
     }
     .item {
       padding: 0.4rem 0.5rem;
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-xs);
       cursor: pointer;
       outline: none;
     }

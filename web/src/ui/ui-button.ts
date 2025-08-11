@@ -13,7 +13,7 @@ export class UIButton extends LitElement {
       color: var(--vp-c-text-1);
       border: 1px solid var(--vp-c-border);
       padding: 0.4rem 0.65rem;
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-xs);
       cursor: pointer;
       font: inherit;
     }
