@@ -5,6 +5,10 @@ import { customElement, property } from 'lit/decorators.js'
 export class UIDialog extends LitElement {
   static styles = css`
     :host {
+      display: block;
+    }
+    
+    .overlay {
       position: fixed;
       inset: 0;
       z-index: 9999;
@@ -157,8 +161,12 @@ export class UIDialog extends LitElement {
   }
 
   render() {
+    if (!this.open) {
+      return html``
+    }
+    
     return html`
-      <div class="${this.open ? '' : 'hidden'}">
+      <div class="overlay">
         <div class="backdrop" @click=${this.cancel}></div>
         <div class="dialog">
           <div class="header">

@@ -39,7 +39,7 @@ export class NavTop extends LitElement {
     .icon { display: inline-block; width: 18px; height: 18px; }
   `
 
-  @state() private isDarkMode: boolean = false
+  @state() private declare isDarkMode: boolean
 
   constructor() {
     super()
