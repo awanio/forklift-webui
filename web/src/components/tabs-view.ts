@@ -4,6 +4,7 @@ import page from 'page'
 import '../ui/ui-button'
 import '../ui/ui-table'
 import '../ui/ui-drawer'
+import '../ui/ui-dialog'
 
 @customElement('tabs-view')
 export class TabsView extends LitElement {
@@ -68,6 +69,11 @@ export class TabsView extends LitElement {
   @state() private declare subTabs: { key: string; title: string }[]
   @state() private declare subKey: string
   @state() private declare showDrawer: boolean
+  @state() private declare drawerMode: 'create' | 'detail'
+  @state() private declare drawerTitle: string
+  @state() private declare drawerRow: Record<string, string> | null
+  @state() private declare showDeleteDialog: boolean
+  @state() private declare deleteRow: Record<string, string> | null
 
   constructor() {
     super()
@@ -80,6 +86,11 @@ export class TabsView extends LitElement {
     this.subTabs = this.computeSubTabs(this.activePath)
     this.subKey = this.subTabs[0]?.key ?? 'overview'
     this.showDrawer = false
+    this.drawerMode = 'create'
+    this.drawerTitle = 'Create'
+    this.drawerRow = null
+    this.showDeleteDialog = false
+    this.deleteRow = null
   }
 
   protected willUpdate(changed: Map<string, unknown>) {
@@ -124,11 +135,44 @@ export class TabsView extends LitElement {
   }
 
   private onCreate() {
+    this.drawerMode = 'create'
+    this.drawerTitle = 'Create'
+    this.drawerRow = null
     this.showDrawer = true
   }
 
   private onCloseDrawer() {
     this.showDrawer = false
+  }
+
+  private onRowAction(e: CustomEvent<{ action: string; row: Record<string, string>; index: number }>) {
+    const { action, row } = e.detail
+    if (action === 'detail') {
+      this.drawerMode = 'detail'
+      this.drawerTitle = 'Detail'
+      this.drawerRow = row
+      this.showDrawer = true
+    } else if (action === 'delete') {
+      this.deleteRow = row
+      this.showDeleteDialog = true
+    }
+  }
+
+  private onConfirmDelete() {
+    if (this.deleteRow) {
+      this.dispatchEvent(new CustomEvent('delete-row', { 
+        detail: { row: this.deleteRow }, 
+        bubbles: true, 
+        composed: true 
+      }))
+    }
+    this.showDeleteDialog = false
+    this.deleteRow = null
+  }
+
+  private onCancelDelete() {
+    this.showDeleteDialog = false
+    this.deleteRow = null
   }
 
   private table(title: string, rows: Array<Record<string, string>>) {
@@ -140,7 +184,7 @@ export class TabsView extends LitElement {
             ＋ Create
           </ui-button>
         </div>
-        <ui-table .rows=${rows}></ui-table>
+        <ui-table .rows=${rows} @row-action=${(e: CustomEvent) => this.onRowAction(e)}></ui-table>
       </div>
     `
   }
@@ -210,19 +254,38 @@ export class TabsView extends LitElement {
       ${this.renderPanel()}
 
       
-      <ui-drawer .open=${this.showDrawer} @close=${() => this.onCloseDrawer()}>
-        <div style="padding: 1rem; display: grid; gap: 0.75rem;">
-          <h3 style="margin:0; font-weight:600; color: var(--vp-c-text-1);">Create ${this.activePath.replace('/', '')} • ${this.subKey}</h3>
-          <label style="display:grid; gap:0.25rem;">
-            <span style="color:var(--vp-c-text-2);">Name</span>
-            <input style="padding:0.5rem; border:1px solid var(--vp-c-border); background:var(--vp-c-bg); color:var(--vp-c-text-1); border-radius: var(--radius-sm);" placeholder="Enter name" />
-          </label>
-          <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:0.5rem;">
-            <ui-button @click=${() => this.onCloseDrawer()}>Cancel</ui-button>
-            <ui-button>Save</ui-button>
+      <ui-drawer .open=${this.showDrawer} title=${this.drawerTitle} @close=${() => this.onCloseDrawer()}>
+        ${this.drawerMode === 'detail' && this.drawerRow ? html`
+          <div style="padding: 1rem; display: grid; gap: 0.5rem;">
+            ${Object.entries(this.drawerRow).map(([k, v]) => html`<div><strong>${k}:</strong> ${v}</div>`)}
+            <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
+              <ui-button @click=${() => this.onCloseDrawer()}>Close</ui-button>
+            </div>
           </div>
-        </div>
+        ` : html`
+          <div style="padding: 1rem; display: grid; gap: 0.75rem;">
+            <label style="display:grid; gap:0.25rem;">
+              <span style="color:var(--vp-c-text-2);">Name</span>
+              <input style="padding:0.5rem; border:1px solid var(--vp-c-border); background:var(--vp-c-bg); color:var(--vp-c-text-1); border-radius: var(--radius-sm);" placeholder="Enter name" />
+            </label>
+            <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:0.5rem;">
+              <ui-button @click=${() => this.onCloseDrawer()}>Cancel</ui-button>
+              <ui-button>Save</ui-button>
+            </div>
+          </div>
+        `}
       </ui-drawer>
+
+      <ui-dialog
+        .open=${this.showDeleteDialog}
+        title="Delete Item"
+        message=${`Are you sure you want to delete "${this.deleteRow?.Name || 'this item'}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        @confirm=${this.onConfirmDelete}
+        @cancel=${this.onCancelDelete}
+      ></ui-dialog>
     `
   }
 }

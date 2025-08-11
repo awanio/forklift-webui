@@ -1,5 +1,7 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
+import './ui-icon-button'
+import './ui-menu'
 
 @customElement('ui-table')
 export class UITable extends LitElement {
@@ -20,6 +22,8 @@ export class UITable extends LitElement {
 
   @property({ attribute: false }) declare rows: Array<Record<string, string>>
 
+  private openIndex: number | null = null
+
   constructor() {
     super()
     this.rows = []
@@ -30,6 +34,27 @@ export class UITable extends LitElement {
     return Object.keys(this.rows[0])
   }
 
+  private actionItems() { return [{ key: 'detail', label: 'Detail' }, { key: 'delete', label: 'Delete' }] }
+
+  private onDotsClick(e: Event, idx: number) {
+    e.stopPropagation()
+    this.openIndex = this.openIndex === idx ? null : idx
+    this.requestUpdate()
+    const onDoc = (ev: Event) => {
+      this.openIndex = null
+      this.requestUpdate()
+      document.removeEventListener('click', onDoc, true)
+    }
+    document.addEventListener('click', onDoc, true)
+  }
+
+  private onMenuSelect(idx: number, item: { key: string; label: string }) {
+    const row = this.rows[idx]
+    this.dispatchEvent(new CustomEvent('row-action', { detail: { action: item.key, row, index: idx }, bubbles: true, composed: true }))
+    this.openIndex = null
+    this.requestUpdate()
+  }
+
   render() {
     const headers = this.headers()
     return html`
@@ -38,12 +63,17 @@ export class UITable extends LitElement {
           <thead>
             <tr>
               ${headers.map((h) => html`<th>${h}</th>`)}
+              <th style="width:48px; text-align:right;"></th>
             </tr>
           </thead>
           <tbody>
             ${this.rows.map(
-              (r) => html`<tr>
+              (r, idx) => html`<tr>
                 ${headers.map((h) => html`<td>${h === 'Status' ? html`<span class="badge">${r[h]}</span>` : r[h]}</td>`)}
+                <td style="position:relative; text-align:right;">
+<ui-icon-button @click=${(e: Event) => this.onDotsClick(e, idx)} aria-label="Row actions"><span style="line-height:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></span></ui-icon-button>
+                  <ui-menu .open=${this.openIndex === idx} .items=${this.actionItems()} @select=${(ev: CustomEvent) => this.onMenuSelect(idx, ev.detail)} style="position:absolute; right:0; top: calc(100% + 4px);"></ui-menu>
+                </td>
               </tr>`
             )}
           </tbody>
